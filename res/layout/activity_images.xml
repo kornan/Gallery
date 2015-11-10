@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:columnWidth="90dp"
+        android:horizontalSpacing="20dp"
+        android:numColumns="3"
+        android:scrollbars="none"
+        android:verticalSpacing="20dp" >
+    </GridView>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/white" >
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/next_btn"
+            android:text="预览"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="10dp"
+            android:layout_below="@id/button3" />
+    </RelativeLayout>
+
+</RelativeLayout>
