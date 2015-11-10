@@ -51,6 +51,7 @@ public class ImagesActivity extends Activity {
 
 	private void initView() {
 		gridView = (GridView) findViewById(R.id.gridview);
+		gridView.setOnItemClickListener(null);
 		gridView.setOnScrollListener(onScrollListener);
 		adapter = new ImagesAdapter(this, dataList, mHandler);
 		gridView.setAdapter(adapter);

@@ -16,7 +16,6 @@
         android:layout_alignRight="@+id/imageView1"
         android:layout_alignTop="@+id/imageView1"
         android:checked="false"
-        android:clickable="false"
-        android:focusable="false" />
+        />
 
 </RelativeLayout>

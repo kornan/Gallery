@@ -19,7 +19,8 @@ public class ImagesAdapter extends BaseAdapter {
 	private BitmapCache cache;
 	private Handler mHandler;
 	private Context context;
-	public  GridView mGridView;
+	public GridView mGridView;
+
 	public ImagesAdapter(Context context, List<ImageItem> list, Handler mHandler) {
 		this.context = context;
 		this.dataList = list;
@@ -27,7 +28,7 @@ public class ImagesAdapter extends BaseAdapter {
 		// cache = new NativeImageLoader();
 		cache = BitmapCache.getInstance();
 	}
-	
+
 	@Override
 	public int getCount() {
 		int count = 0;
@@ -71,23 +72,29 @@ public class ImagesAdapter extends BaseAdapter {
 		}
 		ImageItem item = dataList.get(position);
 		holder.imageView.setTag(item.imagePath);
-		 setImageViewForCache(item.imagePath, holder.imageView);
-//		BitmapCache.getInstance().displayBmp(holder.imageView, item.thumbnailPath, item.imagePath, new ImageCallback() {
-//			
-//			@Override
-//			public void imageLoad(ImageView imageView, Bitmap bitmap, Object... params) {
-//				// TODO Auto-generated method stub
-//				imageView.setImageBitmap(bitmap);
-//			}
-//		});
-		 holder.checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-				dataList.get(position).isSelected=isChecked;
-			}
-		});
+		setImageViewForCache(item.imagePath, holder.imageView);
+		// BitmapCache.getInstance().displayBmp(holder.imageView,
+		// item.thumbnailPath, item.imagePath, new ImageCallback() {
+		//
+		// @Override
+		// public void imageLoad(ImageView imageView, Bitmap bitmap, Object...
+		// params) {
+		// // TODO Auto-generated method stub
+		// imageView.setImageBitmap(bitmap);
+		// }
+		// });
+		holder.checkBox.setOnCheckedChangeListener(null);
+		holder.checkBox.setChecked(item.isSelected);
+		holder.checkBox
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						// TODO Auto-generated method stub
+						dataList.get(position).isSelected = isChecked;
+					}
+				});
 		return convertView;
 	}
 
