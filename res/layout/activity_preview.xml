@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#000000"
     tools:context=".PreviewActivity" >
 
     <android.support.v4.view.ViewPager
@@ -15,6 +16,7 @@
         android:id="@+id/photo_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="#000000"
         android:layout_alignParentBottom="true" >
 
         <Button
@@ -23,8 +25,7 @@
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/bt_quxiao"
-            android:visibility="gone" />
+            android:background="@drawable/bt_quxiao" />
 
         <Button
             android:id="@+id/photo_bt_del"

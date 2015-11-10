@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Handler;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
@@ -47,6 +48,51 @@ public class BitmapCache {
 	public void cancelAllTasks() {
 		if (mImageThreadPool != null) {
 			mImageThreadPool.shutdownNow();
+		}
+	}
+
+	public void displayBmp(final ImageView iv, final int width, final int height,
+			final String sourcePath, final ImageCallback callback) {
+		if (TextUtils.isEmpty(sourcePath)) {
+			Log.e(TAG, "no paths pass in");
+			return;
+		}
+		final String path=sourcePath;
+		Bitmap bitmap = getBitmapFromLruCache(path);
+		if (bitmap != null) {
+			if (callback != null) {
+				callback.imageLoad(iv, bitmap, sourcePath);
+			}
+			iv.setImageBitmap(bitmap);
+			Log.d(TAG, "hit cache");
+			return;
+		}
+		iv.setImageBitmap(null);
+		if (bitmap == null) {
+			mImageThreadPool.execute(new Runnable() {
+				Bitmap thumb;
+
+				@Override
+				public void run() {
+					try {
+							thumb = revitionImageSize(sourcePath,
+									width, height);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (thumb == null)
+						return;
+					addBitmapToLruCache(path, thumb);
+					if (callback != null) {
+						h.post(new Runnable() {
+							@Override
+							public void run() {
+								callback.imageLoad(iv, thumb, sourcePath);
+							}
+						});
+					}
+				}
+			});
 		}
 	}
 
@@ -90,10 +136,12 @@ public class BitmapCache {
 						if (isThumbPath) {
 							thumb = BitmapFactory.decodeFile(thumbPath);
 							if (thumb == null) {
-								thumb = revitionImageSize(sourcePath);
+								thumb = revitionImageSize(sourcePath,
+										iv.getWidth(), iv.getHeight());
 							}
 						} else {
-							thumb = revitionImageSize(sourcePath);
+							thumb = revitionImageSize(sourcePath,
+									iv.getWidth(), iv.getHeight());
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -114,7 +162,8 @@ public class BitmapCache {
 		}
 	}
 
-	public Bitmap revitionImageSize(String path) throws IOException {
+	public Bitmap revitionImageSize(String path, int width, int height)
+			throws IOException {
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(
 				new File(path)));
 		BitmapFactory.Options options = new BitmapFactory.Options();
@@ -123,9 +172,13 @@ public class BitmapCache {
 		in.close();
 		int i = 0;
 		Bitmap bitmap = null;
+		if (width == 0)
+			width = 256;
+		if (height == 0)
+			height = 256;
 		while (true) {
-			if ((options.outWidth >> i <= 256)
-					&& (options.outHeight >> i <= 256)) {
+			if ((options.outWidth >> i <= width)
+					&& (options.outHeight >> i <= height)) {
 				in = new BufferedInputStream(
 						new FileInputStream(new File(path)));
 				options.inSampleSize = (int) Math.pow(2.0D, i);
@@ -133,7 +186,7 @@ public class BitmapCache {
 				bitmap = BitmapFactory.decodeStream(in, null, options);
 				break;
 			}
-			i ++;
+			i++;
 		}
 		return bitmap;
 	}

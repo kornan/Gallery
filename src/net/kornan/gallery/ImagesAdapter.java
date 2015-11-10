@@ -1,11 +1,14 @@
 package net.kornan.gallery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
@@ -15,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 public class ImagesAdapter extends BaseAdapter {
+
 	private List<ImageItem> dataList;
 	private BitmapCache cache;
 	private Handler mHandler;
@@ -85,6 +89,18 @@ public class ImagesAdapter extends BaseAdapter {
 		// });
 		holder.checkBox.setOnCheckedChangeListener(null);
 		holder.checkBox.setChecked(item.isSelected);
+		holder.imageView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(context, PreviewActivity.class);
+				ArrayList<String> drr = new ArrayList<String>();
+				drr.add(dataList.get(position).imagePath);
+				intent.putStringArrayListExtra(PreviewActivity.PREVIEW_TAG, drr);
+				context.startActivity(intent);
+			}
+		});
 		holder.checkBox
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
