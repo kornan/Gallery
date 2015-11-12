@@ -23,7 +23,6 @@ public class ImagesAdapter extends BaseAdapter {
 	private BitmapCache cache;
 	private Handler mHandler;
 	private Context context;
-	public GridView mGridView;
 
 	public ImagesAdapter(Context context, List<ImageItem> list, Handler mHandler) {
 		this.context = context;

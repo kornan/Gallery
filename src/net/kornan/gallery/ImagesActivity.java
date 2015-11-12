@@ -1,33 +1,46 @@
 package net.kornan.gallery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.kornan.gallery.BitmapCache.ImageCallback;
-
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
 
-public class ImagesActivity extends Activity {
+public class ImagesActivity extends Activity implements OnClickListener {
 	private List<ImageItem> dataList;
 	private GridView gridView;
 	private ImagesAdapter adapter;
 	private AlbumHelper helper;
-	public static final String EXTRA_IMAGE_LIST = "imagelist";
+	private Button btn_preview;
+	/**
+	 * 选择图片的最大值,0为无限制,默认为9
+	 */
+	private int select_max = 9;
+	private ArrayList<String> select_images=new ArrayList<String>();
+	// public static final String EXTRA_IMAGE_LIST = "imagelist";
+
 	Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
-				Toast.makeText(ImagesActivity.this, "最多选择9张图片",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(ImagesActivity.this,
+						"最多选择" + select_max + "张图片", Toast.LENGTH_LONG).show();
+				break;
+			case 1:
 				break;
 			default:
 				break;
@@ -46,25 +59,27 @@ public class ImagesActivity extends Activity {
 	}
 
 	private void initData() {
+		select_max = getIntent().getIntExtra("select_max", 9);
 		dataList = helper.getImagesItemList();
 	}
 
 	private void initView() {
+		btn_preview = (Button) findViewById(R.id.btn_preview);
 		gridView = (GridView) findViewById(R.id.gridview);
 		gridView.setOnItemClickListener(null);
 		gridView.setOnScrollListener(onScrollListener);
 		adapter = new ImagesAdapter(this, dataList, mHandler);
 		gridView.setAdapter(adapter);
 
-		adapter.mGridView = gridView;
-
+		btn_preview.setOnClickListener(this);
 	}
 
-	private int mFirstVisibleItem;
-	private int mVisibleItemCount;
 	// 记录是否是第一次进入该界面
 	private boolean isFirstEnterThisActivity = true;
 	private OnScrollListener onScrollListener = new OnScrollListener() {
+		private int mFirstVisibleItem;
+		private int mVisibleItemCount;
+
 		// 滚动停止加载
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -97,9 +112,9 @@ public class ImagesActivity extends Activity {
 				String imagePath = dataList.get(i).imagePath;
 				Bitmap bitmap = BitmapCache.getInstance()
 						.getBitmapFromLruCache(imagePath);
+				ImageView imageView = (ImageView) gridView
+						.findViewWithTag(imagePath);
 				if (bitmap == null) {
-					ImageView imageView = (ImageView) gridView
-							.findViewWithTag(imagePath);
 					BitmapCache.getInstance().displayBmp(imageView,
 							thumbnailPath, imagePath, new ImageCallback() {
 								@Override
@@ -110,8 +125,6 @@ public class ImagesActivity extends Activity {
 								}
 							});
 				} else {
-					ImageView imageView = (ImageView) gridView
-							.findViewWithTag(imagePath);
 					if (imageView != null && bitmap != null) {
 						imageView.setImageBitmap(bitmap);
 					}
@@ -119,6 +132,21 @@ public class ImagesActivity extends Activity {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.btn_preview:
+			Intent intent = new Intent(this, PreviewActivity.class);
+			intent.putStringArrayListExtra(PreviewActivity.PREVIEW_TAG, select_images);
+			startActivity(intent);
+			break;
+
+		default:
+			break;
 		}
 	}
 }
